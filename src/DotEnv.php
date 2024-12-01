@@ -26,7 +26,7 @@ class DotEnv
      */
     protected array $processors = [];
 
-    public function __construct(string $path, array $processors = null)
+    public function __construct(string $path, ?array $processors = null)
     {
         if (!file_exists($path)) {
             throw new InvalidArgumentException(sprintf('%s does not exist', $path));
@@ -66,7 +66,7 @@ class DotEnv
         }
     }
 
-    private function setProcessors(array $processors = null): void
+    private function setProcessors(?array $processors = null): void
     {
         /**
          * Fill with default processors
