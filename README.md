@@ -6,7 +6,7 @@ It comes with a powerful processor system that automatically converts values (bo
 
 ---
 
-## 🇬🇧 English Documentation
+## English Documentation
 
 ### Installation
 
@@ -123,9 +123,9 @@ $processors = [
 
 ### Introduction
 
-PHP-DotEnv est une bibliothèque PHP légère et robuste conçue pour simplifier la gestion des variables d'environnement dans vos applications PHP. Elle analyse un fichier `.env` et charge les variables dans `getenv()`, `$_ENV` et `$_SERVER`.
+PHP-DotEnv est une bibliothèque PHP légère conçue pour simplifier la gestion des variables d'environnement dans vos applications PHP. Elle analyse un fichier `.env` et charge les variables dans `getenv()`, `$_ENV` et `$_SERVER`.
 
-Elle intègre un système de processeurs puissant qui convertit automatiquement les valeurs (booléens, null, nombres) et vous permet de définir vos propres processeurs personnalisés.
+Elle intègre un système de processeurs qui convertit automatiquement les valeurs (booléens, null, nombres) et vous permet de définir vos propres processeurs personnalisés.
 
 ### Installation
 
