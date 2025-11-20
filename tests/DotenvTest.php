@@ -7,7 +7,7 @@ use PhpDevCommunity\Processor\BooleanProcessor;
 use PhpDevCommunity\Processor\NullProcessor;
 use PhpDevCommunity\Processor\NumberProcessor;
 use PhpDevCommunity\Processor\QuotedProcessor;
-use PhpDevCommunity\UniTester\TestCase;
+use Depo\UniTester\TestCase;
 
 class DotenvTest extends TestCase
 {

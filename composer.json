@@ -20,6 +20,6 @@
     },
     "minimum-stability": "alpha",
     "require-dev": {
-        "phpdevcommunity/unitester": "^0.1.0@alpha"
+        "depo/unitester": "^1.0.0"
     }
 }

@@ -1,105 +1,237 @@
-# PHP-DotEnv 
+# PHP-DotEnv
 
-PHP-DotEnv is a lightweight PHP library designed to simplify the management of environment variables in your PHP applications. It provides an elegant solution for loading configuration values from a `.env` file into the environment variables accessible via `getenv()`, `$_ENV`, and `$_SERVER`. This documentation aims to guide you through the installation, usage, and features of PHP-DotEnv.
+PHP-DotEnv is a lightweight and robust PHP library designed to simplify the management of environment variables in your PHP applications. It parses a `.env` file and loads the variables into `getenv()`, `$_ENV`, and `$_SERVER`.
 
-## Installation
+It comes with a powerful processor system that automatically converts values (booleans, nulls, numbers) and allows you to define your own custom processors for specific needs.
 
-To install PHP-DotEnv, you can use [Composer](https://getcomposer.org/), the dependency manager for PHP.
+---
 
-### Composer Require
+## 🇬🇧 English Documentation
+
+### Installation
+
+Requires PHP 7.4 or higher.
+
+Install via Composer:
+
 ```bash
 composer require phpdevcommunity/php-dotenv
 ```
 
-## Requirements
+### Basic Usage
 
-- PHP version 7.4 or higher
+1.  **Create a `.env` file** in your project root:
 
-## Usage
+    ```dotenv
+    APP_ENV=dev
+    DATABASE_URL="mysql:host=localhost;dbname=test"
+    DEBUG=true
+    CACHE_TTL=3600
+    API_KEY=null
+    # This is a comment
+    ```
 
-### 1. Define Environment Variables
+2.  **Load the variables** in your PHP entry point (e.g., `index.php`):
 
-Before using PHP-DotEnv, you need to define your environment variables in a `.env` file. This file should be placed in the root directory of your project. Each line in the file should follow the `KEY=VALUE` format.
+    ```php
+    <?php
+    require 'vendor/autoload.php';
 
-```dotenv
-APP_ENV=dev
-DATABASE_DNS=mysql:host=localhost;dbname=test;
-DATABASE_USER="root"
-DATABASE_PASSWORD=root
-MODULE_ENABLED=true
-NUMBER_LITERAL=0
-NULL_VALUE=null
-```
+    use PhpDevCommunity\DotEnv;
 
-### 2. Load the Variables
+    $envFile = __DIR__ . '/.env';
 
-After defining your environment variables, you can load them into your PHP application using PHP-DotEnv.
+    // Load environment variables
+    (new DotEnv($envFile))->load();
+
+    // Access variables
+    var_dump(getenv('APP_ENV')); // string(3) "dev"
+    var_dump($_ENV['DEBUG']);    // bool(true)
+    ```
+
+### Features
+
+#### 1. Automatic Type Conversion (Default Processors)
+PHP-DotEnv automatically processes values using default processors:
+
+-   **BooleanProcessor**: Converts `true` and `false` (case-insensitive) to PHP `bool`.
+-   **NullProcessor**: Converts `null` (case-insensitive) to PHP `null`.
+-   **NumberProcessor**: Converts numeric strings to `int` or `float`.
+-   **QuotedProcessor**: Removes surrounding double quotes `"` or single quotes `'` from strings.
+
+#### 2. Comments
+Lines starting with `#` are treated as comments and ignored.
+
+#### 3. Trimming
+Keys and values are automatically trimmed of whitespace.
+
+### Advanced Usage: Custom Processors
+
+You can extend the functionality by creating custom processors. A processor must extend `PhpDevCommunity\Processor\AbstractProcessor`.
+
+#### Creating a Custom Processor
+
+Example: A processor that converts comma-separated strings into arrays.
 
 ```php
-<?php
+namespace App\Processor;
+
+use PhpDevCommunity\Processor\AbstractProcessor;
+
+class ArrayProcessor extends AbstractProcessor
+{
+    public function canBeProcessed(): bool
+    {
+        // Process only if value contains a comma
+        return strpos($this->value, ',') !== false;
+    }
+
+    public function execute()
+    {
+        return array_map('trim', explode(',', $this->value));
+    }
+}
+```
+
+#### Registering Custom Processors
+
+Pass an array of processor class names to the `DotEnv` constructor.
+**Note:** When you pass custom processors, you must also include the default ones if you still want them to run.
+
+```php
 use PhpDevCommunity\DotEnv;
+use PhpDevCommunity\Processor\BooleanProcessor;
+use PhpDevCommunity\Processor\NullProcessor;
+use PhpDevCommunity\Processor\NumberProcessor;
+use PhpDevCommunity\Processor\QuotedProcessor;
+use App\Processor\ArrayProcessor;
 
-$absolutePathToEnvFile = __DIR__ . '/.env';
+$processors = [
+    BooleanProcessor::class,
+    NullProcessor::class,
+    NumberProcessor::class,
+    QuotedProcessor::class,
+    ArrayProcessor::class // Your custom processor
+];
 
-(new DotEnv($absolutePathToEnvFile))->load();
+(new DotEnv(__DIR__ . '/.env', $processors))->load();
 ```
 
-### 3. Access Environment Variables
+---
 
-Once loaded, you can access the environment variables using PHP's `getenv()` function.
+## 🇫🇷 Documentation Française
+
+### Introduction
+
+PHP-DotEnv est une bibliothèque PHP légère et robuste conçue pour simplifier la gestion des variables d'environnement dans vos applications PHP. Elle analyse un fichier `.env` et charge les variables dans `getenv()`, `$_ENV` et `$_SERVER`.
+
+Elle intègre un système de processeurs puissant qui convertit automatiquement les valeurs (booléens, null, nombres) et vous permet de définir vos propres processeurs personnalisés.
+
+### Installation
+
+Nécessite PHP 7.4 ou supérieur.
+
+Installez via Composer :
+
+```bash
+composer require phpdevcommunity/php-dotenv
+```
+
+### Utilisation de Base
+
+1.  **Créez un fichier `.env`** à la racine de votre projet :
+
+    ```dotenv
+    APP_ENV=dev
+    DATABASE_URL="mysql:host=localhost;dbname=test"
+    DEBUG=true
+    CACHE_TTL=3600
+    API_KEY=null
+    # Ceci est un commentaire
+    ```
+
+2.  **Chargez les variables** dans votre point d'entrée PHP (ex: `index.php`) :
+
+    ```php
+    <?php
+    require 'vendor/autoload.php';
+
+    use PhpDevCommunity\DotEnv;
+
+    $envFile = __DIR__ . '/.env';
+
+    // Charger les variables d'environnement
+    (new DotEnv($envFile))->load();
+
+    // Accéder aux variables
+    var_dump(getenv('APP_ENV')); // string(3) "dev"
+    var_dump($_ENV['DEBUG']);    // bool(true)
+    ```
+
+### Fonctionnalités
+
+#### 1. Conversion Automatique des Types (Processeurs par défaut)
+PHP-DotEnv traite automatiquement les valeurs à l'aide de processeurs par défaut :
+
+-   **BooleanProcessor** : Convertit `true` et `false` (insensible à la casse) en `bool` PHP.
+-   **NullProcessor** : Convertit `null` (insensible à la casse) en `null` PHP.
+-   **NumberProcessor** : Convertit les chaînes numériques en `int` ou `float`.
+-   **QuotedProcessor** : Supprime les guillemets doubles `"` ou simples `'` entourant les chaînes.
+
+#### 2. Commentaires
+Les lignes commençant par `#` sont traitées comme des commentaires et ignorées.
+
+#### 3. Nettoyage (Trimming)
+Les espaces autour des clés et des valeurs sont automatiquement supprimés.
+
+### Utilisation Avancée : Processeurs Personnalisés
+
+Vous pouvez étendre les fonctionnalités en créant des processeurs personnalisés. Un processeur doit étendre `PhpDevCommunity\Processor\AbstractProcessor`.
+
+#### Créer un Processeur Personnalisé
+
+Exemple : Un processeur qui convertit les chaînes séparées par des virgules en tableaux.
 
 ```php
-/**
- * Retrieve the value of DATABASE_DNS
- */
-var_dump(getenv('DATABASE_DNS'));
+namespace App\Processor;
+
+use PhpDevCommunity\Processor\AbstractProcessor;
+
+class ArrayProcessor extends AbstractProcessor
+{
+    public function canBeProcessed(): bool
+    {
+        // Traiter uniquement si la valeur contient une virgule
+        return strpos($this->value, ',') !== false;
+    }
+
+    public function execute()
+    {
+        return array_map('trim', explode(',', $this->value));
+    }
+}
 ```
 
-### Automatic Type Conversion
+#### Enregistrer les Processeurs Personnalisés
 
-PHP-DotEnv provides automatic type conversion for certain types of values:
+Passez un tableau de noms de classes de processeurs au constructeur de `DotEnv`.
+**Note :** Lorsque vous passez des processeurs personnalisés, vous devez également inclure ceux par défaut si vous souhaitez qu'ils continuent de fonctionner.
 
-- Booleans: Processed as `true` or `false`.
-- Quoted Strings: Surrounding quotes are removed.
-- Null Values: Converted to `null`.
-- Numeric Values: Converted to integers or floats.
+```php
+use PhpDevCommunity\DotEnv;
+use PhpDevCommunity\Processor\BooleanProcessor;
+use PhpDevCommunity\Processor\NullProcessor;
+use PhpDevCommunity\Processor\NumberProcessor;
+use PhpDevCommunity\Processor\QuotedProcessor;
+use App\Processor\ArrayProcessor;
 
-## Processors
+$processors = [
+    BooleanProcessor::class,
+    NullProcessor::class,
+    NumberProcessor::class,
+    QuotedProcessor::class,
+    ArrayProcessor::class // Votre processeur personnalisé
+];
 
-PHP-DotEnv allows you to define custom processors to handle specific types of values in your `.env` file. These processors enable you to control how values are parsed and converted.
-
-### BooleanProcessor
-
-The `BooleanProcessor` converts boolean values specified in the `.env` file to PHP boolean types (`true` or `false`).
-
-```dotenv
-MODULE_ENABLED=true
+(new DotEnv(__DIR__ . '/.env', $processors))->load();
 ```
-
-### QuotedProcessor
-
-The `QuotedProcessor` removes surrounding quotes from quoted strings in the `.env` file.
-
-```dotenv
-DATABASE_USER="root"
-```
-
-### NullProcessor
-
-The `NullProcessor` converts the string "null" to the PHP `null` value.
-
-```dotenv
-NULL_VALUE=null
-```
-
-### NumberProcessor
-
-The `NumberProcessor` converts numeric values to integers or floats.
-
-```dotenv
-NUMBER_LITERAL=0
-```
-
-## Conclusion
-
-PHP-DotEnv offers a straightforward and efficient solution for managing environment variables in PHP applications. By providing automatic type conversion and customizable processors, it simplifies the process of loading and handling configuration values from `.env` files. Whether you're working on a small project or a large-scale application, PHP-DotEnv can help streamline your development process and ensure smooth configuration management. Explore its features, integrate it into your projects, and experience the convenience it brings to your PHP development workflow.
