@@ -1,3 +1,9 @@
+> ⚠️ **Abandoned package**
+>
+> This package is abandoned and no longer maintained.  
+> The author suggests using **[michel/dotenv](https://github.com/michelphp/dotenv)** instead.
+
+
 # PHP-DotEnv
 
 PHP-DotEnv is a lightweight and robust PHP library designed to simplify the management of environment variables in your PHP applications. It parses a `.env` file and loads the variables into `getenv()`, `$_ENV`, and `$_SERVER`.
